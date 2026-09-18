@@ -1,0 +1,74 @@
+[versions]
+
+androidcontextprovider = "1.0.1"
+filekit = "0.14.2"
+kotlin = "2.4.10"
+agp = "8.13.2"
+kotlinx-coroutines = "1.11.0"
+kotlinxBrowserWasmJs = "0.5.0"
+kotlinxDatetime = "0.8.0"
+compose = "1.11.1"
+androidx-activityCompose = "1.13.0"
+# 1.19.0 requires AGP 9.1.0+; stay on 1.18.0 until the AGP upgrade
+androidx-core = "1.18.0"
+media3Exoplayer = "1.10.1"
+detekt = "1.23.8"
+ktlint = "14.2.0"
+# 2.11.0 requires AGP 9.1.0+; stay on 2.10.0 until the AGP upgrade
+androidx-lifecycle-runtime-ktx = "2.10.0"
+jna = "5.18.1"
+platformtoolsDarkmodedetector = "0.7.4"
+rodio = "1.0.2"
+slf4jSimple = "2.0.18"
+
+# minSdk = 21 failed to compile because the project indirectly depends on the library [androidx.navigationevent:navigationevent-android:1.0.1] which requires minSdk = 23
+android-minSdk="23"
+
+[libraries]
+
+androidcontextprovider = { module = "io.github.kdroidfilter:androidcontextprovider", version.ref = "androidcontextprovider" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "media3Exoplayer" }
+androidx-media3-database = { module = "androidx.media3:media3-database", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
+kotlinx-browser-wasm-js = { module = "org.jetbrains.kotlinx:kotlinx-browser-wasm-js", version.ref = "kotlinxBrowserWasmJs" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowserWasmJs" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version = "1.9.0" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "compose" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime-ktx" }
+nucleus-graalvm-runtime = { module = "io.github.kdroidfilter:nucleus.graalvm-runtime", version = "1.9.1" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+jna-jpms = { module = "net.java.dev.jna:jna-jpms", version.ref = "jna" }
+jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
+jna-platform-jpms = { module = "net.java.dev.jna:jna-platform-jpms", version.ref = "jna"}
+platformtools-darkmodedetector = { module = "io.github.kdroidfilter:platformtools.darkmodedetector", version.ref = "platformtoolsDarkmodedetector" }
+rodio = { module = "dev.nucleusframework:nucleus.rodio", version.ref = "rodio" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
+
+[plugins]
+
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+vannitktech-maven-publish = {id = "com.vanniktech.maven.publish", version = "0.37.0"}
+dokka = { id = "org.jetbrains.dokka" , version = "2.2.0"}
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+nucleus = { id = "io.github.kdroidfilter.nucleus", version = "1.15.7" }

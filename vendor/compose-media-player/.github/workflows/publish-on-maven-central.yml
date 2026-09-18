@@ -1,0 +1,61 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-natives:
+    uses: ./.github/workflows/build-natives.yml
+
+  publish:
+    needs: build-natives
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Download all native libraries
+        uses: actions/download-artifact@v8
+        with:
+          path: mediaplayer/src/jvmMain/resources/composemediaplayer/native/
+          pattern: native-*
+          merge-multiple: true
+
+      - name: Verify all natives present
+        run: |
+          EXPECTED=(
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/darwin-aarch64/libNativeVideoPlayer.dylib"
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/darwin-x86-64/libNativeVideoPlayer.dylib"
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/linux-x86-64/libNativeVideoPlayer.so"
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/linux-aarch64/libNativeVideoPlayer.so"
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/win32-x86-64/NativeVideoPlayer.dll"
+            "mediaplayer/src/jvmMain/resources/composemediaplayer/native/win32-arm64/NativeVideoPlayer.dll"
+          )
+          MISSING=0
+          for f in "${EXPECTED[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f ($(wc -c < "$f") bytes)"
+            else
+              echo "MISSING: $f" >&2
+              MISSING=1
+            fi
+          done
+          if [ "$MISSING" = "1" ]; then exit 1; fi
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Publish to Maven Central
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRALUSERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVENCENTRALPASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNINGINMEMORYKEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNINGKEYID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNINGPASSWORD }}

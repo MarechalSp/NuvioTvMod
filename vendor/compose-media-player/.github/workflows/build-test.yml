@@ -1,0 +1,147 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-natives:
+    uses: ./.github/workflows/build-natives.yml
+
+  jvm:
+    needs: build-natives
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Download all native libraries
+        uses: actions/download-artifact@v8
+        with:
+          path: mediaplayer/src/jvmMain/resources/composemediaplayer/native/
+          pattern: native-*
+          merge-multiple: true
+
+      - name: Verify natives
+        run: |
+          for f in \
+            linux-x86-64/libNativeVideoPlayer.so \
+            linux-aarch64/libNativeVideoPlayer.so \
+            darwin-aarch64/libNativeVideoPlayer.dylib \
+            darwin-x86-64/libNativeVideoPlayer.dylib \
+            win32-x86-64/NativeVideoPlayer.dll \
+            win32-arm64/NativeVideoPlayer.dll; do
+            path="mediaplayer/src/jvmMain/resources/composemediaplayer/native/$f"
+            if [ ! -f "$path" ]; then echo "MISSING: $path" >&2; exit 1; fi
+            echo "OK: $path"
+          done
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build and test JVM
+        run: ./gradlew :mediaplayer:compileKotlinJvm :mediaplayer:jvmTest --no-daemon --continue
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-reports-jvm
+          path: '**/build/reports/tests/'
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build Android
+        run: ./gradlew :mediaplayer:compileReleaseKotlinAndroid :mediaplayer:testReleaseUnitTest --no-daemon --continue
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-reports-android
+          path: '**/build/reports/tests/'
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build iOS
+        run: ./gradlew :mediaplayer:compileKotlinIosArm64 :mediaplayer:compileKotlinIosSimulatorArm64 --no-daemon
+
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build JS
+        run: ./gradlew :mediaplayer:compileKotlinJs --no-daemon
+
+  wasmJs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build WasmJS
+        run: ./gradlew :mediaplayer:compileKotlinWasmJs --no-daemon
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Run ktlint and detekt
+        run: ./gradlew ktlintCheck detekt --no-daemon --continue
