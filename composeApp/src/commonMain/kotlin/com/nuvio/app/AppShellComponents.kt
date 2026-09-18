@@ -310,7 +310,7 @@ internal fun AppTabHost(
                     onSwitchProfile = actions.onSwitchProfile,
                     onHomescreenClick = actions.onHomescreenSettingsClick,
                     onMetaScreenClick = actions.onMetaScreenSettingsClick,
-                    onContinueWatchingClick = actions.onContinueWatchingClick,
+                    onContinueWatchingClick = actions.onContinueWatchingSettingsClick,
                     onDownloadsClick = actions.onDownloadsSettingsClick,
                     onAddonsClick = actions.onAddonsSettingsClick,
                     onPluginsClick = actions.onPluginsSettingsClick,

@@ -18,7 +18,7 @@ actual object AppFeaturePolicy {
     actual val trailerPlaybackMode: TrailerPlaybackMode =
         if (isWindowsDesktop) TrailerPlaybackMode.EXTERNAL else TrailerPlaybackMode.IN_APP
     actual val heroTrailerPlaybackSupported: Boolean = !isWindowsDesktop
-    actual val inAppUpdaterEnabled: Boolean = false
+    actual val inAppUpdaterEnabled: Boolean = true
     actual val imdbRatingLogoEnabled: Boolean = true
     actual val mediaPlaybackForegroundServiceEnabled: Boolean = false
     actual val downloadForegroundServiceEnabled: Boolean = false

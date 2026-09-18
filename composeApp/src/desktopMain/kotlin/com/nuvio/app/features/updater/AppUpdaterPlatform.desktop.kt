@@ -48,16 +48,19 @@ actual object AppUpdaterPlatform {
 
     // A Flatpak cannot install anything for itself: the sandbox has no write
     // access to /app and the manifest grants no talk-name for the host Flatpak
-    // service, so the update belongs to the user's store, not to this dialog.
     actual val isSupported: Boolean
-        get() = false
+        get() = when (currentOs) {
+            DesktopUpdaterOs.WINDOWS, DesktopUpdaterOs.MACOS -> true
+            DesktopUpdaterOs.LINUX -> linuxInstallMethod != LinuxInstallMethod.FLATPAK
+            DesktopUpdaterOs.UNKNOWN -> false
+        }
 
     actual val releaseSource: AppUpdateReleaseSource = AppUpdateReleaseSource(
-        owner = "NuvioMedia",
-        repo = "NuvioDesktop",
+        owner = "MarechalSp",
+        repo = "NuvioTvMod",
         channelBranch = null,
         includePrereleases = true,
-        userAgent = "NuvioDesktop",
+        userAgent = "NuvioTvMod",
     )
 
     actual val assetSelector: AppUpdateAssetSelector
