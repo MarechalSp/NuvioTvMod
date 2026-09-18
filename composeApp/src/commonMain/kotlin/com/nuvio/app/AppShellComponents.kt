@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -41,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -152,6 +152,7 @@ internal fun rememberGuardedPopBackStack(
 internal data class AppTabState(
     val searchListState: LazyListState,
     val homeContentGeneration: Int = 0,
+    val profileId: Int? = null,
     val searchFocusRequestCount: Int = 0,
     val tabsRouteActiveState: State<Boolean>,
     val topChromePadding: Dp? = null,
@@ -233,127 +234,98 @@ internal fun AppTabHost(
     actions: AppTabActions,
     modifier: Modifier = Modifier,
 ) {
-    val tabStateHolder = rememberSaveableStateHolder()
-    val isHomeSelected = selectedTab == AppScreenTab.Home
+    RootTabHost(
+        selectedTab = selectedTab,
+        modifier = modifier,
+        active = state.tabsRouteActiveState.value,
+        profileId = state.profileId,
+    ) { tab ->
+        when (tab) {
+            AppScreenTab.Home -> {
+                key(state.homeContentGeneration) {
+                    HomeScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        topChromePadding = state.topChromePadding,
+                        animateCollectionGifs = state.tabsRouteActiveState.value && selectedTab == AppScreenTab.Home,
+                        scrollToTopRequests = requests.homeScrollToTopRequests,
+                        onCatalogClick = actions.onCatalogClick,
+                        onPosterClick = actions.onPosterClick,
+                        onPosterLongClick = actions.onPosterLongClick,
+                        onContinueWatchingClick = actions.onContinueWatchingClick,
+                        onContinueWatchingLongPress = actions.onContinueWatchingLongPress,
+                        continueWatchingDisintegrationRequest = state.continueWatchingDisintegrationRequest,
+                        onFolderClick = actions.onFolderClick,
+                        onFirstCatalogRendered = actions.onInitialHomeContentRendered,
+                    )
+                }
+            }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        tabStateHolder.SaveableStateProvider(AppScreenTab.Home.name) {
-            key(state.homeContentGeneration) {
-                HomeScreen(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .zIndex(if (isHomeSelected) 1f else 0f)
-                        .alpha(if (isHomeSelected) 1f else 0f)
-                        .then(
-                            if (!isHomeSelected) {
-                                Modifier.pointerInput(Unit) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            awaitPointerEvent()
-                                        }
-                                    }
-                                }
-                            } else {
-                                Modifier
-                            }
-                        ),
+            AppScreenTab.Search -> {
+                SearchScreen(
+                    modifier = Modifier.fillMaxSize(),
                     topChromePadding = state.topChromePadding,
-                    animateCollectionGifs = state.tabsRouteActiveState.value && isHomeSelected,
-                    scrollToTopRequests = requests.homeScrollToTopRequests,
-                    onCatalogClick = if (isHomeSelected) actions.onCatalogClick else null,
-                    onPosterClick = if (isHomeSelected) actions.onPosterClick else null,
-                    onPosterLongClick = if (isHomeSelected) actions.onPosterLongClick else null,
-                    onContinueWatchingClick = if (isHomeSelected) actions.onContinueWatchingClick else null,
-                    onContinueWatchingLongPress = if (isHomeSelected) actions.onContinueWatchingLongPress else null,
-                    continueWatchingDisintegrationRequest = state.continueWatchingDisintegrationRequest,
-                    onFolderClick = if (isHomeSelected) actions.onFolderClick else null,
-                    onFirstCatalogRendered = actions.onInitialHomeContentRendered,
+                    listState = state.searchListState,
+                    onPosterClick = actions.onPosterClick,
+                    onPosterLongClick = actions.onPosterLongClick,
+                    searchFocusRequestCount = state.searchFocusRequestCount,
+                    scrollToTopRequests = requests.searchScrollToTopRequests,
                 )
             }
-        }
 
-        if (!isHomeSelected) {
-            tabStateHolder.SaveableStateProvider(selectedTab.name) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .zIndex(1f)
-                        .background(Color(0xFF0D0D10))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {},
-                        ),
-                ) {
-                    when (selectedTab) {
-                        AppScreenTab.Home -> Unit
+            AppScreenTab.Channels -> {
+                TvChannelsScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    topChromePadding = state.topChromePadding,
+                    scrollToTopRequests = requests.channelsScrollToTopRequests,
+                    onWatchFullscreen = { channel, stream ->
+                        actions.onWatchTvChannel?.invoke(channel, stream)
+                    },
+                )
+            }
 
-                        AppScreenTab.Search -> {
-                            SearchScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                listState = state.searchListState,
-                                topChromePadding = state.topChromePadding,
-                                onPosterClick = actions.onPosterClick,
-                                onPosterLongClick = actions.onPosterLongClick,
-                                searchFocusRequestCount = state.searchFocusRequestCount,
-                                scrollToTopRequests = requests.searchScrollToTopRequests,
-                            )
-                        }
+            AppScreenTab.Library -> {
+                LibraryScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    topChromePadding = state.topChromePadding,
+                    scrollToTopRequests = requests.libraryScrollToTopRequests,
+                    onPosterClick = actions.onLibraryPosterClick,
+                    onPosterLongClick = actions.onLibraryPosterLongClick,
+                    onSectionViewAllClick = actions.onLibrarySectionViewAllClick,
+                    onCloudFilePlay = actions.onCloudFilePlay,
+                    onConnectCloudClick = actions.onConnectCloudClick,
+                    disintegrationRequest = state.libraryDisintegrationRequest,
+                )
+            }
 
-                        AppScreenTab.Channels -> {
-                            TvChannelsScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                topChromePadding = state.topChromePadding,
-                                scrollToTopRequests = requests.channelsScrollToTopRequests,
-                                onWatchFullscreen = { channel, stream ->
-                                    actions.onWatchTvChannel?.invoke(channel, stream)
-                                },
-                            )
-                        }
-
-                        AppScreenTab.Library -> {
-                            LibraryScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                topChromePadding = state.topChromePadding,
-                                scrollToTopRequests = requests.libraryScrollToTopRequests,
-                                onPosterClick = actions.onLibraryPosterClick,
-                                onPosterLongClick = actions.onLibraryPosterLongClick,
-                                onSectionViewAllClick = actions.onLibrarySectionViewAllClick,
-                                onCloudFilePlay = actions.onCloudFilePlay,
-                                onConnectCloudClick = actions.onConnectCloudClick,
-                                disintegrationRequest = state.libraryDisintegrationRequest,
-                            )
-                        }
-
-                        AppScreenTab.Settings -> {
-                            SettingsScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                topChromePadding = state.topChromePadding,
-                                rootActionRequests = requests.settingsRootActionRequests,
-                                requestedPageName = state.requestedSettingsPageName,
-                                onRequestedPageConsumed = actions.onRequestedSettingsPageConsumed,
-                                rootActionsEnabled = state.tabsRouteActiveState.value,
-                                onSwitchProfile = actions.onSwitchProfile,
-                                onHomescreenClick = actions.onHomescreenSettingsClick,
-                                onMetaScreenClick = actions.onMetaScreenSettingsClick,
-                                onContinueWatchingClick = actions.onContinueWatchingSettingsClick,
-                                onDownloadsClick = actions.onDownloadsSettingsClick,
-                                onAddonsClick = actions.onAddonsSettingsClick,
-                                onPluginsClick = actions.onPluginsSettingsClick,
-                                onAccountClick = actions.onAccountSettingsClick,
-                                onSupportersContributorsClick = actions.onSupportersContributorsSettingsClick,
-                                onLicensesAttributionsClick = actions.onLicensesAttributionsSettingsClick,
-                                onCheckForUpdatesClick = actions.onCheckForUpdatesClick,
-                                onTestUpdateBannerClick = actions.onTestUpdateBannerClick,
-                                onCollectionsClick = actions.onCollectionsSettingsClick,
-                            )
-                        }
-                    }
-                }
+            AppScreenTab.Settings -> {
+                SettingsScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    topChromePadding = state.topChromePadding,
+                    rootActionRequests = requests.settingsRootActionRequests,
+                    requestedPageName = state.requestedSettingsPageName,
+                    onRequestedPageConsumed = actions.onRequestedSettingsPageConsumed,
+                    rootActionsEnabled = state.tabsRouteActiveState.value,
+                    isSelectedTab = selectedTab == AppScreenTab.Settings,
+                    onNavigatePage = actions.onSettingsPageClick,
+                    onSwitchProfile = actions.onSwitchProfile,
+                    onHomescreenClick = actions.onHomescreenSettingsClick,
+                    onMetaScreenClick = actions.onMetaScreenSettingsClick,
+                    onContinueWatchingClick = actions.onContinueWatchingClick,
+                    onDownloadsClick = actions.onDownloadsSettingsClick,
+                    onAddonsClick = actions.onAddonsSettingsClick,
+                    onPluginsClick = actions.onPluginsSettingsClick,
+                    onAccountClick = actions.onAccountSettingsClick,
+                    onSupportersContributorsClick = actions.onSupportersContributorsSettingsClick,
+                    onLicensesAttributionsClick = actions.onLicensesAttributionsSettingsClick,
+                    onCheckForUpdatesClick = actions.onCheckForUpdatesClick,
+                    onTestUpdateBannerClick = actions.onTestUpdateBannerClick,
+                    onCollectionsClick = actions.onCollectionsSettingsClick,
+                )
             }
         }
     }
 }
+
 
 @Composable
 internal fun TabletFloatingTopBar(

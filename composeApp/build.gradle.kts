@@ -60,6 +60,9 @@ abstract class GenerateRuntimeConfigsTask : DefaultTask() {
     @get:Input
     abstract val sentryEnvironment: Property<String>
 
+    @get:Input
+    abstract val tmdbApiKey: Property<String>
+
     @TaskAction
     fun generate() {
         val props = Properties()
@@ -96,7 +99,18 @@ abstract class GenerateRuntimeConfigsTask : DefaultTask() {
             )
         }
 
-        outDir.resolve("com/nuvio/app/features/tmdb/TmdbConfig.kt").delete()
+        outDir.resolve("com/nuvio/app/features/tmdb").apply {
+            mkdirs()
+            resolve("TmdbConfig.kt").writeText(
+                """
+                |package com.nuvio.app.features.tmdb
+                |
+                |object TmdbConfig {
+                |    const val API_KEY = "${tmdbApiKey.get()}"
+                |}
+                """.trimMargin()
+            )
+        }
 
         outDir.resolve("com/nuvio/app/features/trakt").apply {
             mkdirs()
@@ -469,7 +483,8 @@ val macosNotaryAppSpecificPassword = macosNotaryPassword
     ?.takeUnless { it.startsWith("@keychain:", ignoreCase = true) }
 
 val appVersionConfigFile = rootProject.file("iosApp/Configuration/Version.xcconfig")
-val releaseAppVersionName = readXcconfigValue(appVersionConfigFile, "MARKETING_VERSION")
+val releaseAppVersionName = providers.gradleProperty("nuvio.app.versionName").orNull
+    ?: readXcconfigValue(appVersionConfigFile, "MARKETING_VERSION")
     ?: error("MARKETING_VERSION is missing from ${appVersionConfigFile.path}")
 val releaseAppVersionCode = readXcconfigValue(appVersionConfigFile, "CURRENT_PROJECT_VERSION")
     ?.toIntOrNull()
@@ -593,6 +608,7 @@ val generateRuntimeConfigs = tasks.register<GenerateRuntimeConfigsTask>("generat
     supabaseFallbackUrl.set(runtimeConfigValue("NUVIO_SUPABASE_FALLBACK_URL", "https://api-two.nuvioapp.space"))
     sentryDsn.set(runtimeConfigValue("SENTRY_DSN", "https://a4f60d0d86876166059c050511332924@o4511671534354432.ingest.us.sentry.io/4511676526166016"))
     sentryDesktopDsn.set(runtimeConfigValue("SENTRY_DESKTOP_DSN", "https://36c7f0a556040da6ab5b78e7416a1804@o4511671534354432.ingest.us.sentry.io/4511882360979456"))
+    tmdbApiKey.set(runtimeConfigValue("TMDB_API_KEY", ""))
     sentryEnvironment.set(
         when {
             requestedGradleTasks.any { "benchmark" in it } -> "benchmark"
@@ -1224,6 +1240,8 @@ kotlin {
         val androidHostTest by getting {
             dependencies {
                 implementation("org.robolectric:robolectric:4.16")
+                implementation("androidx.compose.ui:ui-test-junit4:${libs.versions.composeMultiplatform.get()}")
+                implementation("androidx.compose.ui:ui-test-manifest:${libs.versions.composeMultiplatform.get()}")
                 implementation("androidx.work:work-testing:${libs.versions.androidx.work.get()}")
                 implementation("com.squareup.okhttp3:mockwebserver:5.3.2")
             }
@@ -1253,7 +1271,6 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.compottie)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.savedstate)
@@ -1269,6 +1286,11 @@ kotlin {
             implementation(libs.supabase.functions)
             implementation(libs.supabase.storage)
             implementation(libs.reorderable)
+        }
+        val desktopTest by getting {
+            dependencies {
+                implementation(compose.desktop.uiTestJUnit4)
+            }
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
