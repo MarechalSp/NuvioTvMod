@@ -1,4 +1,9 @@
 @echo off
+if exist "%~dp0composeApp\build\compose\binaries\main-release\app\NuvioTvMod\NuvioTvMod.exe" (
+    cd /d "%~dp0composeApp\build\compose\binaries\main-release\app\NuvioTvMod"
+    start "" "NuvioTvMod.exe"
+    exit
+)
 if exist "%~dp0composeApp\build\compose\binaries\main\app\NuvioTvMod\NuvioTvMod.exe" (
     cd /d "%~dp0composeApp\build\compose\binaries\main\app\NuvioTvMod"
     start "" "NuvioTvMod.exe"
