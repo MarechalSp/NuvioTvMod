@@ -1,138 +1,102 @@
 <div align="center">
 
-  <img src="composeApp/src/commonMain/composeResources/drawable/app_logo_wordmark.png" alt="Nuvio" width="300" />
+  <img src="composeApp/src/commonMain/composeResources/drawable/app_logo_wordmark.png" alt="NuvioTvMod" width="320" />
   <br />
-  <br />
-
-  [![Contributors][contributors-shield]][contributors-url]
-  [![Forks][forks-shield]][forks-url]
-  [![Stargazers][stars-shield]][stars-url]
-  [![Issues][issues-shield]][issues-url]
-  [![License][license-shield]][license-url]
+  <h3>📺 NuvioTvMod (Experimental Fork)</h3>
 
   <p>
-    A desktop media app for Windows, macOS, and Linux.
-    <br />
-    Browse, organize, and play media from sources you add.
+    <b>Versão experimental e de testes pessoais desenvolvida através de Vibe Coding com IA.</b><br />
+    Baseada no incrível projeto de código aberto <a href="https://github.com/NuvioMedia/NuvioDesktop">Nuvio Desktop</a>.
+  </p>
+
+  <p>
+    <a href="https://github.com/MarechalSp/NuvioTvMod/releases/latest">
+      <img src="https://img.shields.io/github/v/release/MarechalSp/NuvioTvMod?style=for-the-badge&color=blue&label=Download%20Instalador" alt="Download Release" />
+    </a>
+    <img src="https://img.shields.io/badge/Status-Testes%20Pessoais-orange?style=for-the-badge" alt="Status" />
+    <img src="https://img.shields.io/badge/Feito%20com-Vibe%20Coding%20%2B%20IA-purple?style=for-the-badge" alt="Vibe Coding" />
   </p>
 
 </div>
 
-## ⚠️ Alpha Software - Slow Development - Testers Only
+---
 
-Nuvio Desktop is currently in alpha and is intended only for testers. It is under development and is not suitable for daily use.
+> [!WARNING]
+> ### ⚠️ Versão de Testes Pessoal (Disclaimer & Vibe Coding)
+> Este projeto é uma **versão de testes pessoais** criada por pura curiosidade e experimentação prática utilizando metodologia de **Vibe Coding** (desenvolvimento assistido por Inteligência Artificial).
+>
+> Não se trata de uma versão oficial, comercial ou substituta do Nuvio. Pode conter instabilidades inerentes a softwares em estágio alpha experimental.
 
-Expect breaking changes with every update. Features, settings, stored data, and compatibility may change or stop working without notice. Do not rely on this build as your primary media app, and report any issues you encounter during testing.
+---
 
-## About
+## 🌟 Créditos e Agradecimentos aos Criadores Originais
 
-Nuvio Desktop is a media client for browsing metadata, managing collections and watch progress, downloading media, and playing streams from user-installed extensions or user-provided sources.
+Este fork só existe graças ao trabalho brilhante e à dedicação de toda a equipe e dos colaboradores do projeto original **Nuvio**:
 
-## Installation
+* **Repositório Oficial:** [github.com/NuvioMedia/NuvioDesktop](https://github.com/NuvioMedia/NuvioDesktop)
+* **Site Oficial do Nuvio:** [nuvioapp.space](https://nuvioapp.space)
+* **Organização no GitHub:** [github.com/NuvioMedia](https://github.com/NuvioMedia)
+* **Termos Legais e Isenções do Projeto Original:** [nuvioapp.space/legal](https://nuvioapp.space/legal)
 
-Download the latest desktop build from [GitHub Releases](https://github.com/NuvioMedia/NuvioDesktop/releases/latest).
+Todos os direitos do código original, design base e marcas pertencem aos seus respectivos autores e à comunidade do Nuvio. Incentivamos fortemente que você visite, dê estrela (⭐️) e apoie o projeto oficial!
 
-Release packages are provided for supported desktop platforms:
+---
 
-- Windows: MSI installer
-- macOS: DMG installer
-- Linux: DEB, RPM, FLATPAK and AppImage available.
+## ✨ O que foi modificado nesta versão (`NuvioTvMod`)
 
-## Development
+Esta versão foi customizada para testes específicos com recursos adicionais:
+
+1. **Aba de Canais de TV Ao Vivo:**
+   * Suporte para explorar e reproduzir canais ao vivo fornecidos por addons de mídia instalados pelo usuário.
+   * Guia de programação eletrônico (**EPG**) com suporte a URLs XMLTV customizáveis (sem fonte pré-definida de fábrica).
+   * Controles de visualização: filtros rápidos por addons (com resposta imediata ao clique), categorias e catálogo de canais.
+   * Player de TV em tela cheia com reativação automática dos controles ao mexer o cursor do mouse.
+
+2. **Multi-idioma Completo:**
+   * Interface da aba de TV totalmente traduzida para Português, Inglês e Espanhol, respeitando o idioma selecionado nas configurações do app.
+
+3. **Compatibilidade com Tema Claro (White Mode):**
+   * Ajuste fino no layout: ícones e tipografia da aba de TV escurecem automaticamente quando o aplicativo é configurado no tema branco para máxima legibilidade e conforto visual.
+
+4. **Isolamento de Instalação (Sem Conflitos):**
+   * Renomeado internamente para `NuvioTvMod`.
+   * Diretórios de dados (`AppData/Roaming/NuvioTvMod`) e Cache isolados, além de novo identificador de pacote para Windows.
+   * **Você pode instalar e usar o Nuvio original e o NuvioTvMod simultaneamente na mesma máquina sem que um interfira nos dados do outro.**
+
+5. **Atualizações Automáticas Desativadas:**
+   * As atualizações oficiais em segundo plano foram desabilitadas nesta versão modificada para garantir que futuros updates oficiais não sobrescrevam nem quebrem as funções experimentais de TV.
+
+---
+
+## 📦 Como Instalar
+
+1. Acesse a página de versões: [GitHub Releases](https://github.com/MarechalSp/NuvioTvMod/releases/latest).
+2. Baixe o instalador **`Instalador NuvioTvMod.msi`**.
+3. Execute e instale no seu computador com Windows.
+
+---
+
+## 🛠️ Como Compilar a partir do Código Fonte
+
+Requisitos: Java JDK 17+ instalado e configurado.
 
 ```bash
-git clone https://github.com/NuvioMedia/NuvioDesktop.git
-cd NuvioDesktop
-```
+# Clonar o repositório
+git clone https://github.com/MarechalSp/NuvioTvMod.git
+cd NuvioTvMod
 
-Run from source:
-
-```bash
-./gradlew :composeApp:run
-```
-
-On Windows PowerShell:
-
-```powershell
+# Executar em modo desenvolvimento (Windows PowerShell)
 .\gradlew.bat :composeApp:run
+
+# Gerar o instalador MSI limpo para Windows
+.\gradlew.bat :composeApp:packageReleaseMsi --rerun-tasks
 ```
 
-Build a release package for the current host:
+O instalador gerado ficará em:
+`composeApp/build/compose/binaries/main/msi/NuvioTvMod-Windows-x64-*.msi`
 
-```bash
-./gradlew :composeApp:packageReleaseDistributionForCurrentOS
-```
+---
 
-Platform-specific packaging:
+## ⚖️ Aviso Legal & DMCA
 
-```bash
-# Windows
-./gradlew :composeApp:packageReleaseMsi --rerun-tasks
-
-# macOS
-./scripts/build-macos-release-dmgs.sh --package-only
-
-# Linux
-./gradlew :composeApp:packageReleaseDeb
-```
-
-## Project Structure
-
-- `composeApp/` contains the app code.
-- `composeApp/src/commonMain/` contains shared UI, features, repositories, and platform-agnostic logic.
-- `composeApp/src/desktopMain/` contains desktop-specific integrations.
-- `composeApp/Configuration/DesktopVersion.properties` contains the desktop release version and build code.
-
-## Versioning
-
-Desktop versions are set in `composeApp/Configuration/DesktopVersion.properties`.
-
-```properties
-VERSION_NAME=0.1.1-alpha
-VERSION_CODE=1
-```
-
-Use the version helper when changing desktop release versions:
-
-```bash
-./scripts/set-version.sh --desktop 0.1.2-alpha --desktop-code 2
-./scripts/set-version.sh --show
-```
-
-## Legal & DMCA
-
-Nuvio functions solely as a client-side interface for browsing metadata and playing media provided by user-installed extensions and/or user-provided sources. It is intended for content the user owns or is otherwise authorized to access.
-
-Nuvio is not affiliated with any third-party extensions, catalogs, sources, or content providers. It does not host, store, or distribute any media content.
-
-For comprehensive legal information, including our full disclaimer, third-party extension policy, and DMCA/Copyright information, please visit our [Legal & Disclaimer Page](https://nuvioapp.space/legal).
-
-## Built With
-
-- Kotlin Multiplatform
-- Compose Multiplatform
-- Kotlin
-- Compose Desktop packaging
-- Native desktop player integrations
-
-## Star History
-
-<a href="https://www.star-history.com/#NuvioMedia/NuvioDesktop&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=NuvioMedia/NuvioDesktop&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=NuvioMedia/NuvioDesktop&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=NuvioMedia/NuvioDesktop&type=date&legend=top-left" />
- </picture>
-</a>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/NuvioMedia/NuvioDesktop.svg?style=for-the-badge
-[contributors-url]: https://github.com/NuvioMedia/NuvioDesktop/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/NuvioMedia/NuvioDesktop.svg?style=for-the-badge
-[forks-url]: https://github.com/NuvioMedia/NuvioDesktop/network/members
-[stars-shield]: https://img.shields.io/github/stars/NuvioMedia/NuvioDesktop.svg?style=for-the-badge
-[stars-url]: https://github.com/NuvioMedia/NuvioDesktop/stargazers
-[issues-shield]: https://img.shields.io/github/issues/NuvioMedia/NuvioDesktop.svg?style=for-the-badge
-[issues-url]: https://github.com/NuvioMedia/NuvioDesktop/issues
-[license-shield]: https://img.shields.io/github/license/NuvioMedia/NuvioDesktop.svg?style=for-the-badge
-[license-url]: https://github.com/NuvioMedia/NuvioDesktop/blob/main/LICENSE
+O NuvioTvMod funciona exclusivamente como uma interface de cliente para navegação e reprodução de conteúdos a partir de extensões e fontes adicionadas ou configuradas pelo próprio usuário. O software **não hospeda, não armazena, não distribui e não transmite nenhum conteúdo de mídia ou lista protegida por direitos autorais**. O uso é de inteira responsabilidade do usuário final.
