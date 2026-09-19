@@ -71,6 +71,7 @@ internal object VersionUtils {
     fun isPrerelease(raw: String?): Boolean = parse(raw)?.prerelease?.isNotEmpty() == true
 
     fun isRemoteNewer(remote: String?, local: String?): Boolean {
+        if (normalize(remote).equals(normalize(local), ignoreCase = true)) return false
         val remoteVersion = parse(remote) ?: return false
         val localVersion = parse(local) ?: return false
         return remoteVersion > localVersion
@@ -79,6 +80,7 @@ internal object VersionUtils {
     // Desktop historically compares numeric version components and falls back to
     // treating a changed, non-empty release label as a new release.
     fun isRemoteNewerLegacy(remote: String?, local: String?): Boolean {
+        if (normalize(remote).equals(normalize(local), ignoreCase = true)) return false
         val remoteParts = parseLegacyVersionParts(remote)
         val localParts = parseLegacyVersionParts(local)
 
