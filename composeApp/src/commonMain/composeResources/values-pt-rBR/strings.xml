@@ -357,6 +357,10 @@
     <string name="tv_channels_link_copied">Link copiado!</string>
     <string name="tv_channels_aspect_fit">Ajustar à tela</string>
     <string name="tv_channels_aspect_fill">Preencher tela</string>
+    <string name="compose_player_picture_in_picture">Picture-in-Picture</string>
+    <string name="compose_player_pip_placeholder_title">Vídeo em Picture-in-Picture</string>
+    <string name="compose_player_pip_restore">Restaurar para o Player Principal</string>
+    <string name="compose_player_pip_window_title">Nuvio • Picture-in-Picture</string>
     <string name="tv_channels_close_preview">Fechar pré-visualização</string>
     <string name="tv_channels_error_loading">Erro ao carregar transmissão do canal.</string>
     <string name="tv_channels_retry">Tentar Novamente</string>

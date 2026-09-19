@@ -33,17 +33,26 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.nuvio.app.core.ui.NuvioLoadingIndicator
 import com.nuvio.app.core.ui.nuvio
+import com.nuvio.app.features.player.ManagePlayerPictureInPicture
 import com.nuvio.app.features.player.PlatformPlayerSurface
 import com.nuvio.app.features.player.PlayerControlsAction
 import com.nuvio.app.features.player.PlayerControlsState
 import com.nuvio.app.features.player.PlayerResizeMode
+import com.nuvio.app.features.player.togglePlayerPictureInPicture
 import com.nuvio.app.features.streams.StreamItem
 import com.nuvio.app.features.tvchannels.TvChannelItem
 import com.nuvio.app.features.tvchannels.playableTvUrl
 import kotlinx.coroutines.delay
+import nuvio.composeapp.generated.resources.Res
+import nuvio.composeapp.generated.resources.compose_player_picture_in_picture
+import nuvio.composeapp.generated.resources.compose_player_pip_placeholder_title
+import nuvio.composeapp.generated.resources.compose_player_pip_restore
+import nuvio.composeapp.generated.resources.compose_player_pip_window_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TvChannelVideoPlayer(
@@ -62,6 +71,13 @@ fun TvChannelVideoPlayer(
     val playableUrl = stream?.playableTvUrl ?: stream?.playableDirectUrl
     var controlsVisible by remember(channel?.id) { mutableStateOf(true) }
     var controlsActivityTick by remember(channel?.id) { mutableLongStateOf(0L) }
+    var isPlaying by remember(channel?.id) { mutableStateOf(true) }
+    var videoSize by remember(channel?.id) { mutableStateOf(IntSize.Zero) }
+
+    ManagePlayerPictureInPicture(
+        isPlaying = isPlaying,
+        videoSize = videoSize,
+    )
 
     LaunchedEffect(controlsVisible, controlsActivityTick) {
         if (!controlsVisible) return@LaunchedEffect
@@ -150,11 +166,31 @@ fun TvChannelVideoPlayer(
 
             playableUrl != null -> {
                 val proxyHeaders = stream?.behaviorHints?.proxyHeaders?.request.orEmpty()
-                val channelControlsState = remember(channel?.name, channel?.addonName, controlsVisible) {
+                val pipLabel = stringResource(Res.string.compose_player_picture_in_picture)
+                val pipPlaceholderTitle = channel?.name.orEmpty().ifBlank {
+                    stringResource(Res.string.compose_player_pip_placeholder_title)
+                }
+                val pipRestoreLabel = stringResource(Res.string.compose_player_pip_restore)
+                val pipWindowTitle = channel?.name?.let { "$it • Nuvio" }
+                    ?: stringResource(Res.string.compose_player_pip_window_title)
+
+                val channelControlsState = remember(
+                    channel?.name,
+                    channel?.addonName,
+                    controlsVisible,
+                    pipLabel,
+                    pipPlaceholderTitle,
+                    pipRestoreLabel,
+                    pipWindowTitle,
+                ) {
                     PlayerControlsState(
                         title = channel?.name.orEmpty(),
                         streamTitle = channel?.addonName.orEmpty(),
                         controlsVisible = controlsVisible,
+                        pipLabel = pipLabel,
+                        pipPlaceholderTitle = pipPlaceholderTitle,
+                        pipRestoreLabel = pipRestoreLabel,
+                        pipWindowTitle = pipWindowTitle,
                     )
                 }
                 PlatformPlayerSurface(
@@ -168,6 +204,10 @@ fun TvChannelVideoPlayer(
                         when (action) {
                             PlayerControlsAction.Back -> {
                                 onClosePreview()
+                                true
+                            }
+                            PlayerControlsAction.PictureInPicture -> {
+                                togglePlayerPictureInPicture()
                                 true
                             }
                             else -> false
@@ -198,12 +238,22 @@ fun TvChannelVideoPlayer(
                                 onToggleFullscreen()
                                 true
                             }
+                            "pictureInPicture",
+                            "pip" -> {
+                                togglePlayerPictureInPicture()
+                                true
+                            }
                             else -> false
                         }
                     },
                     modifier = Modifier.fillMaxSize(),
                     onControllerReady = {},
-                    onSnapshot = {},
+                    onSnapshot = { snapshot ->
+                        isPlaying = snapshot.isPlaying
+                        if (snapshot.videoWidth > 0 && snapshot.videoHeight > 0) {
+                            videoSize = IntSize(snapshot.videoWidth, snapshot.videoHeight)
+                        }
+                    },
                     onError = {},
                 )
             }

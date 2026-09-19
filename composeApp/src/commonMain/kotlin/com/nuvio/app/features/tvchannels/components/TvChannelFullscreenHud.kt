@@ -33,6 +33,7 @@ import androidx.compose.material.icons.rounded.CloseFullscreen
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.NavigateBefore
 import androidx.compose.material.icons.rounded.NavigateNext
+import androidx.compose.material.icons.rounded.PictureInPictureAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -69,12 +70,15 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.nuvio.app.core.ui.nuvio
 import com.nuvio.app.features.player.PlayerResizeMode
+import com.nuvio.app.features.player.rememberIsInPictureInPicture
+import com.nuvio.app.features.player.togglePlayerPictureInPicture
 import com.nuvio.app.features.streams.StreamItem
 import com.nuvio.app.features.tvchannels.TvChannelItem
 import com.nuvio.app.features.tvchannels.playableTvUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nuvio.composeapp.generated.resources.Res
+import nuvio.composeapp.generated.resources.compose_player_picture_in_picture
 import nuvio.composeapp.generated.resources.tv_channels_aspect_fill
 import nuvio.composeapp.generated.resources.tv_channels_aspect_fit
 import nuvio.composeapp.generated.resources.tv_channels_close_player
@@ -338,6 +342,39 @@ fun TvChannelFullscreenHud(
                                     ),
                                 )
                             }
+                        }
+                    }
+
+                    val isInPip = rememberIsInPictureInPicture()
+
+                    // Picture-in-Picture Button
+                    if (playableUrl != null) {
+                        IconButton(
+                            onClick = {
+                                togglePlayerPictureInPicture()
+                                TvChannelsRepository.setFullscreen(false)
+                            },
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isInPip) tokens.colors.accent.copy(alpha = 0.40f)
+                                    else Color.Black.copy(alpha = 0.60f),
+                                )
+                                .border(
+                                    1.dp,
+                                    if (isInPip) tokens.colors.accent else Color.White.copy(alpha = 0.15f),
+                                    CircleShape,
+                                ),
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = if (isInPip) tokens.colors.accent else Color.White,
+                            ),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.PictureInPictureAlt,
+                                contentDescription = stringResource(Res.string.compose_player_picture_in_picture),
+                                modifier = Modifier.size(20.dp),
+                            )
                         }
                     }
 

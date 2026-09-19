@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.LiveTv
 import androidx.compose.material.icons.rounded.OpenInFull
+import androidx.compose.material.icons.rounded.PictureInPictureAlt
 import androidx.compose.material.icons.rounded.Tv
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,12 +58,15 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.nuvio.app.core.ui.nuvio
 import com.nuvio.app.features.player.PlayerResizeMode
+import com.nuvio.app.features.player.rememberIsInPictureInPicture
+import com.nuvio.app.features.player.togglePlayerPictureInPicture
 import com.nuvio.app.features.streams.StreamItem
 import com.nuvio.app.features.tvchannels.TvChannelItem
 import com.nuvio.app.features.tvchannels.playableTvUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nuvio.composeapp.generated.resources.Res
+import nuvio.composeapp.generated.resources.compose_player_picture_in_picture
 import nuvio.composeapp.generated.resources.tv_channels_available_sources
 import nuvio.composeapp.generated.resources.tv_channels_copy_link
 import nuvio.composeapp.generated.resources.tv_channels_fullscreen
@@ -402,11 +406,36 @@ fun TvChannelPreviewPanel(
                             }
                         }
 
-                        // Action Icons: Fullscreen, External Player & Copy Link
+                        val isInPip = rememberIsInPictureInPicture()
+
+                        // Action Icons: PiP, Fullscreen, External Player & Copy Link
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
+                            if (playableUrl != null) {
+                                // Discrete Icon: Picture-in-Picture
+                                IconButton(
+                                    onClick = { togglePlayerPictureInPicture() },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (isInPip) tokens.colors.accent.copy(alpha = 0.25f)
+                                            else Color.White.copy(alpha = 0.08f),
+                                        ),
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        contentColor = if (isInPip) tokens.colors.accent else Color.White.copy(alpha = 0.85f),
+                                    ),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.PictureInPictureAlt,
+                                        contentDescription = stringResource(Res.string.compose_player_picture_in_picture),
+                                        modifier = Modifier.size(17.dp),
+                                    )
+                                }
+                            }
+
                             // Discrete Icon: Expand to Fullscreen
                             IconButton(
                                 onClick = onToggleFullscreen,

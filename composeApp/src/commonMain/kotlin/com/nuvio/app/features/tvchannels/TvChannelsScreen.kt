@@ -82,6 +82,7 @@ import com.nuvio.app.core.ui.NuvioLoadingIndicator
 import com.nuvio.app.core.ui.nuvio
 import com.nuvio.app.core.ui.nuvioPlatformExtraTopPadding
 import com.nuvio.app.core.ui.nuvioSafeBottomPadding
+import com.nuvio.app.features.player.togglePlayerPictureInPicture
 import com.nuvio.app.features.streams.StreamItem
 import com.nuvio.app.features.tvchannels.components.TvAddonsSelectionModal
 import com.nuvio.app.features.tvchannels.components.TvChannelListItem
@@ -184,6 +185,11 @@ fun TvChannelsScreen(
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                 when (event.key) {
                     Key.Escape, Key.F -> {
+                        exitFullscreen()
+                        true
+                    }
+                    Key.P -> {
+                        togglePlayerPictureInPicture()
                         exitFullscreen()
                         true
                     }
